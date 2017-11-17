@@ -31,21 +31,15 @@ class FilesController extends Controller
       
         return view('User/showfiles');
     }
-    public function index3()
+    public function index3(Request $request)
     {
-        // $archivo = Record::orderBy('id','ASC')->paginate(8); 
-        // return view('User/showfiles')->with('archivos', $archivo);
-
-        // $usuarios = Record::find(1)->users;
-        // dd($usuarios);
-        // return view('User/showfiles')->with('users', $usuarios);
-        //$roles = DB::table('records')->pluck('name','user_id');
-        //$roles = DB::table('records')->select('name');
+        
         $record = Record::all()->pluck('name','user_id');
         $users = DB::table('records')
                             ->join('users', 'records.user_id', '=', 'users.id')     
                             ->select('users.name as nombre_del_propietario',
                             'records.name as nombre_del_archivo','records.user_id as ubicacion_del_archivo') 
+                            ->where('records.name','like','%'.$request->name.'%')
                             ->get();
                             
    //    var_dump($users);

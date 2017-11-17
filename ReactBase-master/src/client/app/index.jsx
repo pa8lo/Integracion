@@ -1,9 +1,7 @@
 import React from 'react';
 import {render, handleClick} from 'react-dom';
 import {FilesByServer, ServeTitle} from './FilesByServer.jsx'
-import {Servidor} from './MyCounter.jsx'
-import {Example} from './boots.jsx'
-import {Table} from 'reactstrap';
+
 
 class App extends React.Component {
 
