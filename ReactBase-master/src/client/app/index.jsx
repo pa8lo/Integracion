@@ -14,7 +14,7 @@ class App extends React.Component {
   }
 
   componentDidMount(){//Espera a que el componente se termine de dibujar
-  	fetch("/test") //Hago un fetch
+  	fetch("/test?name=w") //Hago un fetch
   		.then((resp)=>resp.json())
   			.then((datos)=>{
   				this.setState({

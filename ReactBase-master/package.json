@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack -d --watch",
     "build": "webpack -p",
-    "server": "node src/server/server.js",
+    "server": "nodemon src/server/server.js",
     "start": "npm run dev & npm run server"
   },
   "author": "",
@@ -19,6 +19,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "node-fetch": "^1.7.3",
+    "nodemon": "^1.12.1",
     "parse-filepath": "^1.0.1",
     "react": "^16.1.0",
     "react-addons": "^0.9.1-deprecated",

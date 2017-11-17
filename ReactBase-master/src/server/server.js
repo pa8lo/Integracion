@@ -15,7 +15,8 @@ server.use("/test2",express.static(baseFolder))
 
 server.use(bodyParser.json())
 var urlss;
-function futureResp(url){
+function futureResp(url,query){
+
 	return	fecth(url) //Hago un fetch al puerto de Laravel
 	      .then(function(res) { //La respuesta que me llega entra en el parametro de la funcion
 	        return res.json() //Retorna un json de la rta
@@ -32,10 +33,15 @@ function futureResp(url){
 	      })
 }
 
-const servers = ['http://localhost:8000/test','http://localhost:8000/test'] //Array con las urls de donde vienen los datos
-
+//Array con las urls de donde vienen los datos
+const servers = ['http://localhost:8000/test','http://localhost:8000/test'] 
 server.get("/test",(req,resp)=>{
-  const calls = servers.map(futureResp) //Transformo el array de urls en promesas
+	
+var filtrados = servers.map(function(x) {
+		return x +"?name="+req.query.name;
+	})
+	console.log(req.query.name)
+  const calls = filtrados.map(futureResp) //Transformo el array de urls en promesas
   Promise.all(calls) //Se va a ejecutar el resto cuando todas las promesas esten listas
 	 .then(function(data) { //De esa devolucion lo pasa como paramentro en la funcion 
 	        console.log("Leyendo la información del server")
@@ -44,6 +50,7 @@ server.get("/test",(req,resp)=>{
 	      })
   
 })
+
 
 server.listen(8080,function (){
   console.log("Server levantado en el puerto 8080")
