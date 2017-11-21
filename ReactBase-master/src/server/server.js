@@ -34,7 +34,7 @@ function futureResp(url,query){
 }
 
 //Array con las urls de donde vienen los datos
-const servers = ['http://localhost:8000/test','http://localhost:8000/test'] 
+const servers = ['http://localhost:8000/test'] 
 server.get("/test",(req,resp)=>{
 	
 var filtrados = servers.map(function(x) {
