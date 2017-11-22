@@ -24,6 +24,7 @@
     "react": "^16.1.0",
     "react-addons": "^0.9.1-deprecated",
     "react-dom": "^16.1.0",
+    "react-materialize": "^1.1.0",
     "react-typeahead-mouseover": "0.0.5",
     "reactstrap": "^5.0.0-alpha.3",
     "redux": "^3.7.2",

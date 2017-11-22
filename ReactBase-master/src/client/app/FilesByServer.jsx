@@ -1,7 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import { Player } from 'video-react';
-
+import {MediaBox} from 'react-materialize';
 
 
 export class FilesByServer extends React.Component {
@@ -46,9 +46,9 @@ export class Preview extends React.Component {
 
 				render() {
 					switch (this.props.format ){
-					case ".jpeg":return <img className="img materialboxed"src={this.props.path} />
-					case ".jpg" :return <img className="img materialboxed"src={this.props.path}/>
-					case ".png":return <img className="img materialboxed"src={this.props.path} />
+					case ".jpg":return <MediaBox src={this.props.path} width="96"/>
+					case ".jpeg" :return <MediaBox src={this.props.path} width="96"/>
+					case ".png":return <MediaBox src={this.props.path} width="96"/>
 					case ".docx":return <img className="img materialboxed"  src="https://lh4.ggpht.com/-wROmWQVYTcjs3G6H0lYkBK2nPGYsY75Ik2IXTmOO2Oo0SMgbDtnF0eqz-BRR1hRQg=w300"/>
 					case ".rar":return <div>win rar</div>
 					case ".mp3":return <Player
