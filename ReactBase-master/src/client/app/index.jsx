@@ -8,32 +8,18 @@ class Tabla extends React.Component {
   constructor(props){ //Para consumir los servicios
   	super(props)
   	this.state = {
-		  futureData : [],
+			futureData : [],
 	  }
-		
   }
 
-  componentDidMount(){
-		alert(this.props.texto)//Espera a que el componente se termine de dibujar
-  	fetch("/test?name="+this.props.texto) //Hago un fetch
+	updateList(filter){
+  	fetch("/test?name="+filter) //Hago un fetch
   		.then((resp)=>resp.json())
   			.then((datos)=>{
   				this.setState({
 					  futureData : datos,
-					  
   				})
-  			})
-	}
-	componentDidUpdate(){
-		//alert(this.props.texto)//Espera a que el componente se termine de dibujar
-  	fetch("/test?name="+this.props.texto) //Hago un fetch
-  		.then((resp)=>resp.json())
-  			.then((datos)=>{
-  				this.setState({
-					  futureData : datos,
-					  
-  				})
-  			})
+				})
   }
 
   render () {
@@ -41,7 +27,6 @@ class Tabla extends React.Component {
 	   <FilesByServer key={dataByServer.toString()} data={dataByServer}  /> )
 	return(
 		<Table>
-			
 			<thead>		 
 				<tr>
 					<th>Nombre del archivo</th>
@@ -57,37 +42,7 @@ class Tabla extends React.Component {
 			)
   }
 }
-// class ActionLink extends React.Component {
-	
-// 	  constructor(props){ //Para consumir los servicios
-// 		  super(props)
-// 		  this.state = {isToggleOn: true};
-		  
-			 
-// 		  this.handleClick = this.handleClick.bind(this);
-// 	  }
 
-// 	 handleClick() {
-// 		this.setState(prevState => ({
-// 			isToggleOn: !prevState.isToggleOn
-// 		  }));
-// 		  if(this.state.isToggleOn == true){
-// 			return(
-// 				render(<App/>, document.getElementById('app')
-// 			  ))
-// 		  }else{
-// 				render(null, document.getElementById('app'))
-// 		  }
-// 	}
-  
-// 	render() {
-// 		return (
-// 		  <a onClick={this.handleClick} className="waves-effect waves-light btn">
-// 			{this.state.isToggleOn ? 'Mostrar Archivos' : 'Ocultar Archivos'}
-// 		  </a>
-// 		);
-// 	  }
-// 	}
 class NameForm extends React.Component {
   constructor(props) {
     super(props);
@@ -102,30 +57,39 @@ class NameForm extends React.Component {
   }
 
   handleSubmit(event) {	
-							event.preventDefault();
-							return(
-								render(<Tabla texto={this.state.value}/>,document.getElementById('app')
-								))
-		
+			event.preventDefault();
+			this.props.onUpdate(this.state.value)
 	}
-	crearTabla(){
-							alert(this.state.value)
-		
-	}
+
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={(e) => this.handleSubmit(e)}>
 					<div className="input-field">
           <input id="search"  type="text" placeholder="Buscar" value={this.state.value} onChange={this.handleChange}/>
-					<button onClick={() => this.crearTabla()}></button>
         	</div>
       </form>
     );
   }
 }
 
-	render(<NameForm/>, document.getElementById('link'));
+class App extends React.Component {
+
+	constructor(props){
+		super(props)
+	}
+	
+	render(){
+		return <div>
+						<nav>
+							<NameForm onUpdate={(filter)=> this.refs.tabla.updateList(filter)} />
+						</nav>
+						<Tabla ref="tabla" />
+					</div>
+	}
+}
+
+render(<App/>, document.getElementById('app'));
 
 
 

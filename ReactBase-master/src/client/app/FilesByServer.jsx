@@ -46,19 +46,19 @@ export class Preview extends React.Component {
 
 				render() {
 					switch (this.props.format ){
-					case ".jpg":return <MediaBox src={this.props.path} width="96"/>
+					case ".JPG":return <MediaBox src={this.props.path} width="96"/>
 					case ".jpeg" :return <MediaBox src={this.props.path} width="96"/>
 					case ".png":return <MediaBox src={this.props.path} width="96"/>
 					case ".docx":return <img className="img materialboxed"  src="https://lh4.ggpht.com/-wROmWQVYTcjs3G6H0lYkBK2nPGYsY75Ik2IXTmOO2Oo0SMgbDtnF0eqz-BRR1hRQg=w300"/>
 					case ".rar":return <div>win rar</div>
-					case ".mp3":return <Player
-					 width={96}
-					src={this.props.path}
-				 	 />
-					case ".mp4" : return  <Player 
-					width={96}
-					src={this.props.path}
-				  />
+				 	case ".mp3":return <Player
+				 	 width={96}
+				 	src={this.props.path}
+				  	 />
+				 	case ".mp4" : return  <Player 
+				 	width={96}
+				 	src={this.props.path}
+				   />
 					default : return <div>sin vista previa</div>
 				}
 								
