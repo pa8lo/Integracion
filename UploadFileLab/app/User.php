@@ -28,11 +28,15 @@ class User extends Authenticatable
     ];
 
     public function records(){
-        return $this->hasMany('App\Record');
+        return $this->hasMany(Record::class);
     }
 
-    public function notifications(){
-        return $this->hasOne('App\Notification');
+    public function folders(){
+        return $this->hasMany(Folder::class);
+    }
+
+    public function sharedTo(){
+        return $this->belongsToMany(Record::class, 'records_shared', 'shared_to_user', 'record_id');
     }
 
 }

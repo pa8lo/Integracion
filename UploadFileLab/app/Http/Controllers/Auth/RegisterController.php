@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Folder;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -66,11 +67,22 @@ class RegisterController extends Controller
         $path = $data['avatar']->store('public');
         list($path, $image) = explode("/", $path);
 
-        return User::create([
+        User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'avatar' => $image,
         ]);
+
+
+        $usuario = User::where('email', $data['email'])->get();
+
+        $folder = new Folder();
+        $folder->name = "Home";
+        $folder->folder_hash = md5("Home");
+        $folder->user_id = $usuario[0]->id;
+        $folder->save();
+
+        return $usuario[0];
     }
 }

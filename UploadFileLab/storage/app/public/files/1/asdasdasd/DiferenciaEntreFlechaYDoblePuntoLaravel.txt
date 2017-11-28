@@ -1,0 +1,111 @@
+El doble punto se usa cuando no instancias una clase
+class StaticDemo {...};
+StaticDemo::static
+
+si haces una instancia, usa ->
+class StaticDemo {...};
+$s = new StaticDemo();
+$s->static;
+
+Cuando la parte izquierda es una instancia de objeto, usted usa ->. De lo contrario, lo usas ::.
+
+Esto significa que ->se usa principalmente para acceder a miembros de instancias (aunque también se puede usar para acceder a miembros estáticos, se desaconseja su uso), mientras ::que normalmente se usa para acceder a miembros estáticos (aunque en algunos casos especiales, se usa para acceder a miembros de instancia )
+
+En general, ::se utiliza para la resolución de alcance , y puede tener ya sea un nombre de clase, parent, self, o (en PHP 5.3) statica su izquierda. parentse refiere al alcance de la superclase de la clase donde se usa; selfse refiere al alcance de la clase donde se usa; staticse refiere al "alcance llamado" (ver enlaces estáticos finales ).
+
+La regla es que una llamada con ::es una llamada de instancia si y solo si:
+
+el método de destino no está declarado como estático y
+hay un contexto de objeto compatible en el momento de la llamada, lo que significa que deben ser verdaderas:
+la llamada se hace desde un contexto donde $thisexiste y
+la clase de $thises la clase del método que se llama o una subclase de la misma.
+Ejemplo:
+
+class A {
+    public function func_instance() {
+        echo "in ", __METHOD__, "\n";
+    }
+    public function callDynamic() {
+        echo "in ", __METHOD__, "\n";
+        B::dyn();
+    }
+
+}
+
+class B extends A {
+    public static $prop_static = 'B::$prop_static value';
+    public $prop_instance = 'B::$prop_instance value';
+
+    public function func_instance() {
+        echo "in ", __METHOD__, "\n";
+        /* this is one exception where :: is required to access an
+         * instance member.
+         * The super implementation of func_instance is being
+         * accessed here */
+        parent::func_instance();
+        A::func_instance(); //same as the statement above
+    }
+
+    public static function func_static() {
+        echo "in ", __METHOD__, "\n";
+    }
+
+    public function __call($name, $arguments) {
+        echo "in dynamic $name (__call)", "\n";
+    }
+
+    public static function __callStatic($name, $arguments) {
+        echo "in dynamic $name (__callStatic)", "\n";
+    }
+
+}
+
+echo 'B::$prop_static: ', B::$prop_static, "\n";
+echo 'B::func_static(): ', B::func_static(), "\n";
+$a = new A;
+$b = new B;
+echo '$b->prop_instance: ', $b->prop_instance, "\n";
+//not recommended (static method called as instance method):
+echo '$b->func_static(): ', $b->func_static(), "\n";
+
+echo '$b->func_instance():', "\n", $b->func_instance(), "\n";
+
+/* This is more tricky
+ * in the first case, a static call is made because $this is an
+ * instance of A, so B::dyn() is a method of an incompatible class
+ */
+echo '$a->dyn():', "\n", $a->callDynamic(), "\n";
+/* in this case, an instance call is made because $this is an
+ * instance of B (despite the fact we are in a method of A), so
+ * B::dyn() is a method of a compatible class (namely, it's the
+ * same class as the object's)
+ */
+echo '$b->dyn():', "\n", $b->callDynamic(), "\n";
+Salida:
+
+B :: $ prop_static: B :: $ prop_static value
+B :: func_static (): en B :: func_static
+
+$ b-> prop_instance: B :: $ prop_instance value
+$ b-> func_static (): en B :: func_static
+
+$ b-> func_instance ():
+en B :: func_instance
+en A :: func_instance
+en A :: func_instance
+
+$ a-> dyn ():
+en A :: callDynamic
+en dynamic dyn (__callStatic)
+
+$ b-> dyn ():
+en A :: callDynamic
+en dynamic dyn (__call)
+
+https://stackoverflow.com/questions/3173501/whats-the-difference-between-double-colon-and-arrow-in-php?noredirect=1&lq=1
+
+En laravel cuando en un controlador instancias una clase
+$user = new User();
+$user->name();
+En caso de no instanciarla
+$user = User::all();

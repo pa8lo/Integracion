@@ -15,7 +15,7 @@
       @if(Auth::User()->type == "admin")
       <li><a href="{{ route('users.index') }}">Usuarios</a></li>
       
-      <li><a href="/filesadmin">Todos los archivos</a></li>
+      <li><a href="{{ route('adminallfiles') }}">Todos los archivos</a></li>
       @endif
     @endif
       @guest

@@ -10,67 +10,47 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-/*Route::group(['prefix' => 'admin'], function(){
-
-	Route::resource('users','UsersController'); //Primer parametro la url, segundo el controlador
-	Route::get('/users/destroy/{id}', [
-
-		'uses' 	=> 'UsersController@destroy',
-		'as'	=> 'users.destroy'
-
-	]);
-
-});*/
-
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/file/all', 'NotificationController@show');
-
 Auth::routes();
 
-Route::resource('files','FilesController');
+Route::resource('users','UsersController')->middleware('auth'); //Esta opcion es para el administrador
+
+Route::resource('files','FilesController')->middleware('auth');
+
+Route::resource('folder','FoldersController')->middleware('auth');
 
 Route::get('/files/destroy/{id}', [
 
         'uses'  => 'FilesController@destroy',
         'as'    => 'files.destroy'
 
-]);
+])->middleware('auth');
 
-Route::get('/file/all','NotificationController@show')->name('allfiles');
+Route::get('/folders/destroy/{id}', [
 
-Route::resource('users','UsersController');
+        'uses'  => 'FoldersController@destroy',
+        'as'    => 'folders.destroy'
 
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('formulario', 'StorageController@index');
-
-Route::post('/storage/create', 'StorageController@store')->name("uploadfiles");
+])->middleware('auth');
 
 Route::get('storage/{archivo}', function ($archivo) {
      $public_path = public_path();
      $url = $public_path.'/storage/'.$archivo;
-     //verificamos si el archivo existe y lo retornamos
      if (Storage::exists($archivo))
      {
        return response()->download($url);
      }
-     //si no se encuentra lanzamos un error 404.
      abort(404);
-});
-Route::get('/filesadmin','FilesController@index2');
+})->middleware('auth');
 
-Route::get('folder/{id}', 'NotificationController@showFolder')->name("moveToFolder")->middleware('auth');
+Route::get('/shared/files', 'SharedRecordsController@show')->name("showShared")->middleware('auth');
 
-Route::get('shared/files', 'NotificationController@showShared')->name("showShared");
+Route::post('/shared/files', 'SharedRecordsController@create')->name("sharedWith")->middleware('auth');
 
-Route::post('files/shared', 'NotificationController@shardWith')->name("sharedWith");
+Route::get('/file/all','NotificationController@show')->name('allfiles')->middleware('auth');
 
-Route::get('/test', 'FilesController@index3');
+Route::get('/file/admin','NotificationController@showAllFiles')->name('adminallfiles')->middleware('auth');
+Route::get('/api','FilesController@mostrarArchivos');

@@ -4,291 +4,207 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Record;
+use App\Folder;
 use App\User;
 use App\Notification;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 use File;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class FilesController extends Controller
 {
 
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        // $archivo = Record::orderBy('id','ASC')->paginate(8); 
-        // return view('User/showfiles')->with('archivos', $archivo);
-
-        // $usuarios = Record::find(1)->users;
-        // dd($usuarios);
-        // return view('User/showfiles')->with('users', $usuarios);
-      
-        return view('User/showfiles');
-    }
-    public function index3(Request $request)
-    {
-        
-        $record = Record::all()->pluck('name','user_id');
-        $users = DB::table('records')
-                            ->join('users', 'records.user_id', '=', 'users.id')     
-                            ->select('users.name as nombre_del_propietario',
-                            'records.name as nombre_del_archivo','records.user_id as ubicacion_del_archivo') 
-                            ->where('records.name','like','%'.$request->name.'%')
-                            ->get();
-                            
-   //    var_dump($users);
-        //json_decode($users);
-       // var_dump($users);
-        // $users = DB::table('records')
-        // ->join('users', 'records.user_id', '=', 'users.id')                      
-        // ->select('users.name')
-        // ->select('records.name')
-        // ->get();                            
-        //json_encode($users);
-        // return $users;
-       /// json_decode($users);
-        //$users['ubicacion_del_archivo'] = "asdñalsdk";
-        //$id_usuario = $users['ubicacion_del_archivo'];
-        //json_encode($users);
-        //var_dump ($users);
-        //echo $users[0]['ubicacion_del_archivo'];
-        //var_dump($users);
-        //echo $users;
-        
-       // echo $users;                            
-       foreach ($users as $name => $user) {
-            $user ->ubicacion_del_archivo =  "storage/files/"
-            .$user ->ubicacion_del_archivo
-            ."/" 
-            .$user->nombre_del_archivo;
-         }
-         return $users;
-        //return view('User/showfiles');
+        $usuarios = User::all();
+        return view('User/showfiles')->with('users', $usuarios);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        
-    }
-    public function index2()
-    {
-        $record = Record::all();
-        return view('User/filesadmin')->with('record',$record);
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
 
         if($request->file){
             $nombre = $request->file->getClientOriginalName();
-            if (Storage::exists( 'public/files/'.Auth::user()->id.'/' . $nombre,
+            if (Storage::exists( 'public/files/'.Auth::user()->id.'/'.'Home'.'/'.$nombre,
                 file_get_contents($request->file('file')->getRealPath())))
             {   
+               return back()->with('nombre', $nombre);
+               exit();
+           }
+           Storage::put(
+            'public/files/'.Auth::user()->id.'/'.'Home'.'/'. $nombre,
+            file_get_contents($request->file('file')->getRealPath())
+            );
 
-                 return view('User/showfiles')->with('nombre', $nombre);;
-                exit();
-            }
-            Storage::put(
-                'public/files/'.Auth::user()->id.'/' . $nombre,
-                file_get_contents($request->file('file')->getRealPath())
-                );
+           $archivo = new Record();
+           $archivo->name = $nombre;
+           $archivo->user_id = Auth::user()->id;
 
-        //\Storage::disk('filesRedirect')->put($nombre,  \File::get($file));
-        //$nombre = Auth::user()->id.'/' . $nombre;
-
-            $archivo = new Record($request->all());
-            $archivo->name = $nombre;
-            $archivo->user_id = Auth::user()->id;
-
-            if(is_null($request['is_public'])){
-                $archivo->is_public = "no";
-            }else{
-                $archivo->is_public = $request->is_public;
-            }
-
-            $archivo->is_folder = $request->is_folder;
-            $archivo->save();
-
-            // $notify = new Notification();
-            // $notify->user_id = $request->id;
-            // $notify->user_name = $user->name;
-            // $notify->record_id = $archivo->id;
-            // $notify->record_name = $archivo->name;
-            // $notify->save();
-
-
+           if(is_null($request->is_public)){
+            $archivo->is_public = "no";
         }else{
-            $result = File::makeDirectory ('storage/files/'.$request->id.'/'.$request->folder_name, 0777, true, true);
-
-            $hashmd5 = md5($request->folder_name);
-            if(Record::where("name",$request->$request->folder_name)->where("is_file","yes")->count() > 0){
-                // 
-            }
-            $archivo = new Record($request->all());
-            $archivo->name = $request->folder_name;
-            $archivo->is_folder = "yes";
-            $archivo->folder_hash = $hashmd5;
-            $archivo->user_id = Auth::user()->id;
-            $archivo->save();
+            $archivo->is_public = $request->is_public;
         }
+
+        $archivo->save();
+
+        $folder = Folder::where('user_id', Auth::user()->id)->first();
+        $archivo->folders()->attach($folder->id);
+
+    }
 
         //$archivo->users()->sync(Auth::user()->id); //Sync se utiliza como attach para relacionar tabla pivote
 
-        return redirect()->action('FilesController@index');
-    }
+    return redirect()->action('FilesController@index');
+}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
+public function show($id)
+{
+    return view('User.showfiles')->with('id_folder', $id);
+}
+
+public function edit($id)
+{
         //
-    }
+}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+public function update(Request $request, $id)
+{
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
+    $author_record = Record::findOrFail($id);
+    $author;
 
-        if($request->oldname != "" && $request->oldname != null){
+    foreach ($author_record->user()->get() as $role) {
+       $author = $role->id;
+   }
 
-            $archivo = Record::findOrFail($id);
-            $req = new Record($request->all());
+   if($author == Auth::user()->id){
 
-            if(is_null($req['name'])){
-                $archivo->name = $archivo->name;
-            }else{
-                $archivo->name = $request->name;
-            }
+    //Accion ante el cambio de nombre del archivo
+    if($request->oldname != "" && $request->oldname != null){
 
-            if (Storage::exists( 'public/files/'.Auth::user()->id.'/'.$request->name))
-            {   
+        $archivo = Record::findOrFail($id);
 
-                return view('User/showfiles')->with('nombre', $archivo);
-                exit();  
-            }
-            
+        if(is_null($request->name)){
+            $archivo->name = $archivo->name;
+        }else{
+            $archivo->name = $request->name;
+        }if (Storage::exists( 'public/files/'.Auth::user()->id.'/'.$request->name)){
+            return view('User/showfiles')->with('nombre', $archivo);
+        }else{
             Storage::move('public/files/'.Auth::user()->id.'/'.$request->oldname, 'public/files/'.Auth::user()->id.'/'.$request->name);
             $archivo->save();
-
-        }else{
-            $archivo = Record::findOrFail($request->file_id);
-            $archivo->folder_hash = $request->hash_folder;
-            if (Storage::exists(  'public/files/'.Auth::user()->id.'/'.$request->name_folder.'/'.$request->name_file))
-            {   
-
-                return view('User/showfiles')->with('nombre', $archivo);
-                exit();  
-            }
-            
-            
-            Storage::move('public/files/'.Auth::user()->id.'/'.$request->name_file, 'public/files/'.Auth::user()->id.'/'.$request->name_folder.'/'.$request->name_file);
-            $archivo->save();
         }
 
-        return redirect()->action('FilesController@index');
-    }
+    //Accion ante mover el archivo hacia otra carpeta y actualizar tabla pivote
+    }else{
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $rec = Record::find($id);
+        $archivo = Record::findOrFail($id);
+        $id_folder = Folder::findOrFail($request->folder_id);
 
-        if($rec->is_folder == "yes"){
-            Storage::deleteDirectory('public/files/'.Auth::user()->id.'/'.$rec->name);
-            
-            $match = Record::find($id)->all();
+        foreach ($archivo->folders as $role) {
 
-            for ($i=0; $i < count($match); $i++) { 
-                if($match[$i]['folder_hash'] == $rec->folder_hash){
-                $archivo = ($match[$i]['id']);
-                $borrado = Record::findOrFail($archivo);
-                $borrado->delete();
-                }
-            }
-            
+            if($archivo->id == $role->pivot->record_id){
 
-        }else{
-            if($rec->folder_hash == "106a6c241b8797f52e1e77317b96a201"){
-                Storage::delete('public/files/'.Auth::user()->id.'/'.$rec->name);
-                $rec->delete();
-            }else{
-                $folder_hash_asigned = $rec->folder_hash;
-                $todo = Record::find($id)->all();
-                for ($i=0; $i < count($todo); $i++) {
-                    if($todo[$i]['is_folder'] = "yes"){
-                        $folder_name = $todo[$i]['name'];
-                        Storage::delete('public/files/'.Auth::user()->id.'/'.$folder_name.'/'.$rec->name);
+                $name_folder_from = Folder::findOrFail($role->pivot->folder_id);
+                $name_folder_from = $name_folder_from->name;
+
+                if($archivo->id == $role->pivot->record_id){
+
+                    DB::table('folder_record')
+                    ->where('record_id',$archivo->id)
+                    ->update([
+                        "folder_id" => $id_folder->id,
+                        ]);
+
+                    if(Storage::exists( 'public/files/'.Auth::user()->id.'/'.$id_folder->name.'/'.$archivo->name)){
+                        return view('User/showfiles')->with('nombre', $archivo); 
+                    }else{
+                        Storage::move('public/files/'.Auth::user()->id.'/'.$name_folder_from.'/'.$archivo->name, 'public/files/'.Auth::user()->id.'/'.$id_folder->name.'/'.$archivo->name);
                     }
+
                 }
-                $archivo = Record::find($rec->id);
-                $archivo->delete();
             }
         }
-
-        return redirect()->action('FilesController@index');
-
-
-        // dd("echo");
-        // $roc = Record::find($id);
-        // Storage::deleteDirectory('public/files/'.Auth::user()->id.'/'.$roc->name);
-
-        // return redirect()->action('FilesController@index');
-
-
-
-        // $rec = Record::find($id);
-        // if($rec->is_folder == "yes"){
-        //     $verify = Storage::files('public/files/'.Auth::user()->id.'/'.$rec->name);
-        //     for ($i=0; $i < count($verify); $i++) { 
-        //         dd("hola");
-        //     }
-        //     Storage::deleteDirectory('public/files/'.Auth::user()->id.'/'.$rec->name);
-        // }
-
-        // $archivo = Record::findOrFail($id);
-        // $archivo->delete();
-        // return redirect()->action('FilesController@index');
+        return redirect()->action('FilesController@index');  
     }
+
+}else{
+    return view('User.showfiles')->with('validation', $author);
+}
+}
+
+public function destroy($id)
+{
+    $rec = Record::findOrFail($id);
+
+    foreach ($rec->folders as $folder) {
+
+        if($folder->id == 1){
+            Storage::delete('public/files/'.Auth::user()->id.'/'.$rec->name);
+            $rec->delete();
+
+        }else if($folder->id != 1){
+            Storage::delete('public/files/'.Auth::user()->id.'/'.$folder->name.'/'.$rec->name);
+            $rec->delete();
+        }
+
+    }
+
+    return redirect()->action('FilesController@index');
+}
+public function mostrarArchivos(Request $request)
+{
+    
+    
+    $users = DB::table('records')
+                        ->join('users', 'records.user_id', '=', 'users.id')     
+                        ->select('users.name as nombre_del_propietario',
+                        'records.name as nombre_del_archivo','records.user_id as ubicacion_del_archivo') 
+                        ->where('records.name','like','%'.$request->name.'%')
+                        ->get();
+                        
+//    var_dump($users);
+    //json_decode($users);
+   // var_dump($users);
+    // $users = DB::table('records')
+    // ->join('users', 'records.user_id', '=', 'users.id')                      
+    // ->select('users.name')
+    // ->select('records.name')
+    // ->get();                            
+    //json_encode($users);
+    // return $users;
+   /// json_decode($users);
+    //$users['ubicacion_del_archivo'] = "asdñalsdk";
+    //$id_usuario = $users['ubicacion_del_archivo'];
+    //json_encode($users);
+    //var_dump ($users);
+    //echo $users[0]['ubicacion_del_archivo'];
+    //var_dump($users);
+    //echo $users;
+    
+   // echo $users;                            
+   foreach ($users as $name => $user) {
+        $user ->ubicacion_del_archivo =  "storage/files/"
+        .$user ->ubicacion_del_archivo
+        ."/" 
+        .$user->nombre_del_archivo;
+     }
+     return $users;
+    //return view('User/showfiles');
+}
+
+/**
+ * Show the form for creating a new resource.
+ *
+ * @return \Illuminate\Http\Response
+ */
+
+
 }

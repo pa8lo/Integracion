@@ -1,0 +1,3 @@
+Si pongo ::Class Estoy pidiendo el nombre (String) de la clase, sino lo que me pasa es la clase como clase, es como si lo pusieras entre comillas a la clase, ejemplo:
+
+'App\Message' = App\Message::class

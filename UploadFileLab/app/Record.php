@@ -15,15 +15,19 @@ class Record extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_public', 'is_folder', 'folder_hash',
+        'name', 'is_public', 'user_id',
     ];
 
-    public function users(){
-    	return $this->belongsTo('App\User');
+    public function user(){
+    	return $this->belongsTo(User::class);
     }
 
-    public function notifications(){
-        return $this->hasOne('App\Notification');
+    public function folders(){
+        return $this->belongsToMany(Folder::class);
+    }
+
+    public function sharedWith(){
+        return $this->belongsToMany(User::class, 'records_shared', 'record_id', 'shared_to_user');
     }
 
 }

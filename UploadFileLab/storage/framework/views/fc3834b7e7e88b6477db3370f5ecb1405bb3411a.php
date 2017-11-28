@@ -32,6 +32,7 @@
 
 						<input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
 
+						<input type="hidden" value="<?php echo e(Auth::user()->id); ?>" name="id">
 						<input type="hidden" value="yes" name="is_folder">
 
 						<span class="flow-text">Agrega una nueva carpeta a tu nube</span>

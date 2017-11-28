@@ -1,0 +1,3 @@
+Solucionar imagen en User/show
+Relacionar controlador con tabla intermedia para poder acceder al contenido de c/u
+Agregarle boton a los resultados en User/show para hacer la descarga

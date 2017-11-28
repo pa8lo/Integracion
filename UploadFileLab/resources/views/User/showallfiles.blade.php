@@ -10,29 +10,21 @@
 			<div style="text-align: center" class="col s12 center">
 				<div class="collection">
 
-
-
 					@foreach ($notify as $notify)
+
 					@if($notify->is_public == "yes")
 
-					@if($notify->folder_hash != "106a6c241b8797f52e1e77317b96a201")
+					@foreach($notify->folders()->get() as $rec)
+
 					<h4 class="center flow-text">Han compartido un archivo publico {{$notify['name']}}</h4>
-					<a href='http://localhost:8000/storage/files/{{$notify['user_id']}}/{{$notify['name']}}'>Ver archivo</a>
-					@else
-					<h4 class="center flow-text">Han compartido un archivo publico {{$notify['name']}}</h4>
-					<a href='http://localhost:8000/storage/files/{{$notify['user_id']}}/{{$notify['name']}}'>Ver archivo</a>
+					<a href='http://localhost:8000/storage/files/{{$notify->user_id}}/{{$rec->name}}/{{$notify->name}}'>Ver archivo</a>
+
+					@endforeach
+
 					@endif
 
-					@endif
+					@endforeach
 
-					@endforeach()
-
-{{-- 
-					@foreach ($dato as $datos)
-
-					<a href="http://localhost:8000/storage/files/{{$datos['user_id']}}/{{$datos['name']}}" class="collection-item"><span style="left: 30px">{{ $datos["name"] }}</span></a>
-        			
-					@endforeach --}}
 				</div>
 			</div>
 		</div>

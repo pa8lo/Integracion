@@ -3,7 +3,7 @@
   <script src="{{ asset('plugins/jquery/jquery-3.2.1.js') }}"></script>
   <script src="{{ asset('plugins/materialize/js/materialize.js') }}"></script>
 
-@include('Admin.template.main')
+@include('layouts.nav')
 
 @section('title'){{-- Section se usa para rellenar aquello que fue marcado con Yield --}}
     Inicio de mi pagina
@@ -14,17 +14,32 @@
 @endsection
 
 
-@if(Auth::User())
+@if(Auth::User() && Auth::User()->status != "denied")
 
 @include('Admin.template.parts.toogleuser')
 
 @endif
 
 
-@if ($errors->has('email'))
-  <div class="red deep-orange white-text darken-1 card-panel pulse " style="text-align: center">
-  <strong>{{ $errors->first('email') }}</strong>
-</div>
+@if ($errors->any() && $errors->has('email') || $errors->has('name') || $errors->has('password'))
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+    <h4 id="modelId" class="center-align flow-text">No se ha podido completar el registro verifique los siguentes errores</h4>
+      @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+      @endforeach
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cerrar</a>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#modal1').modal('open');
+    });
+  </script>
 @endif
 
 
@@ -47,7 +62,7 @@
       </div>
       </div>
 
-    <div class="parallax"><img src="{{  asset('image/fondo.jpg') }}"></div>
+    <div class="parallax"><img src="{{  asset('image/first.jpg') }}"></div>
   </div>
   <div class="section white">
     <div class="row container">

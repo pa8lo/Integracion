@@ -11,14 +11,17 @@ Archivos
 	<div class="col s12 m4 l8">
 		<div class="collection">
 
-			@if(Auth::user()->notifications()->count() == 0)
+
+			@if(Auth::user()->sharedTo()->count() == 0)
 			<h2 class="flow-text center">No tienes archivos compartidos por el momento</h2>
 			@else
-			@foreach(Auth::user()->notifications->all() as $rec)
-			@if(Auth::user()->id == $rec->user_id)
-			<h4 class="flow-text center">Te han compartido el archivo {{$rec->record_name}}</h4>
-			<a style="" disabled href="http://localhost:8000/storage/files/{{$rec->author_id}}/{{$rec->record_name}}" type="text" class="validate">{{$rec->name}}descargar</a>
-			@endif
+			@foreach(Auth::user()->sharedTo()->get() as $rec)
+			@foreach($rec->folders()->get() as $fol)
+
+			<h4 class="flow-text center">Te han compartido el archivo {{$rec->name}}</h4>
+			<a class="waves-effect waves-light validate" disabled href="http://localhost:8000/storage/files/{{$fol->user_id}}/{{$fol->name}}/{{$rec->name}}" type="text">Descargar</a>
+
+			@endforeach
 			@endforeach
 			@endif
 		</div>

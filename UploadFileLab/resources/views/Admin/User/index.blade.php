@@ -33,7 +33,7 @@
 			</td>
 
 			<td>
-				<!-- <button class="btn-floating waves-effect waves-light modal-trigger open-edit" data-model-id="{{ $users['id'] }}" data-target="modal1"><i class="material-icons" >edit</i></button>-->
+
 
 				<a href="#modal1-{{$users->id}}" class="btn-floating waves-effect waves-light modal-trigger open-edit"><i class="material-icons">edit</i></a>
 
@@ -53,13 +53,13 @@
 
 								<label>Modificar estado</label>
 								@if($users->status == 'active')
-								<select class="browser-default" name="state">
+								<select class="browser-default" name="status">
 									<option value="{{ $users->status }}" disabled selected>Seleccione una opcion</option>
 									<option value="denied">Bloquear</option>
 								</select>
 								@else
 								<label>Modificar estado</label>
-								<select class="browser-default" name="state">
+								<select class="browser-default" name="status">
 									<option value="{{ $users->status }}" disabled selected>Seleccione una opcion</option>
 									<option value="active">Activar</option>
 								</select>
@@ -111,47 +111,6 @@
 	</tbody>
 </table>
 
-
-<!-- Modal Structure -->
-
-
-		<!-- /*<div id="modal1" class="modal">
-			<div class="modal-content">
-				<h4 id="modelId">Modificar ID: </h4>
-
-					<section id="section_create">
-						
-						
-						<label>Modificar estado</label>
-						<select class="browser-default" name="state">
-							<option value="" disabled selected>Seleccione una opcion</option>
-							<option value="active">Activo</option>
-							<option value="denied">Bloqueado</option>
-						</select>
-						<br>
-						<label>Modificar permisos</label>
-						<select class="browser-default" name="type">
-       						<option value="" disabled selected>Seleccione una opcion</option>
-        					<option value="member" name="type">Miembro</option>
-        					<option value="admin" name="type">Administrador</option>
-      					</select>
-      					<br>
-      					<label>Modificar espacio</label>
-      					<input type="text" name="space" class="validate">
-
-      					<button value="1" class="btn waves-effect waves-light" id="alinea_boton" type="submit">Enviar
-      					</button>
-      					<a href="#" class="btn waves-effect waves-light" id="alinea_boton">Enviar</a>
-						
-
-	
-					</section>
-
-			</div>
-			<div class="modal-footer">
-				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cerrar</a>
-			</div>
-		</div> */ -->
  
 <script type="text/javascript">
 
