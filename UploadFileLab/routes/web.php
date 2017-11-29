@@ -53,4 +53,4 @@ Route::post('/shared/files', 'SharedRecordsController@create')->name("sharedWith
 Route::get('/file/all','NotificationController@show')->name('allfiles')->middleware('auth');
 
 Route::get('/file/admin','NotificationController@showAllFiles')->name('adminallfiles')->middleware('auth');
-Route::get('/api','FilesController@mostrarArchivos');
+Route::get('/getFileByTagName','FilesController@mostrarArchivos');

@@ -13,7 +13,7 @@ class Tabla extends React.Component {
   }
 
 	updateList(filter){
-  	fetch("/api?name="+filter) //Hago un fetch
+  	fetch("/getFileByTagName?name="+filter) //Hago un fetch
   		.then((resp)=>resp.json())
   			.then((datos)=>{
   				this.setState({

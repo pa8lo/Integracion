@@ -7,7 +7,9 @@ const urls = require('url-parse')
 var util  = require('util');
 const server = express()
 const parsePath =require("parse-filepath")
-
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/servers', { useMongoClient: true });
+console.log()
 const baseFolder = path.resolve(__dirname, '../client/')
 
 server.use("/",express.static(baseFolder))
@@ -34,8 +36,8 @@ function futureResp(url,query){
 }
 
 //Array con las urls de donde vienen los datos
-const servers = ['http://localhost:8000/api'] 
-server.get("/api",(req,resp)=>{
+const servers = ['http://localhost:8000/getFileByTagName'] 
+server.get("/getFileByTagName",(req,resp)=>{
 	
 var filtrados = servers.map(function(x) {
 		return x +"?name="+req.query.name;

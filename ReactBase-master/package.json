@@ -18,6 +18,8 @@
     "babel-preset-react": "^6.24.1",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "mongodb": "^2.2.33",
+    "mongoose": "^4.13.5",
     "node-fetch": "^1.7.3",
     "nodemon": "^1.12.1",
     "parse-filepath": "^1.0.1",
